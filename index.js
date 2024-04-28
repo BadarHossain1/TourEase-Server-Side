@@ -43,7 +43,7 @@ async function run() {
       const query = { email: email };
       const result = await myColl.find(query).toArray();
       res.send(result);
-      console.log(result);
+      console.log(result)
     })
 
     app.post('/spots', async (req, res) => {
