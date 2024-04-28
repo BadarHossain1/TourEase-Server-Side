@@ -45,6 +45,14 @@ async function run() {
       res.send(result);
       console.log(result)
     })
+    app.get('/spots/Countries/:countryName', async (req, res) => {
+      const countryName = req.params.countryName;
+      console.log('Country:', countryName);
+      const query = { countryName: countryName };
+      const result = await myColl.find(query).toArray();
+      res.send(result);
+      console.log(result)
+    })
 
     app.post('/spots', async (req, res) => {
       const spot = req.body;
