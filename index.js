@@ -31,6 +31,9 @@ async function run() {
     await client.connect();
     const myDB = client.db("TourEaseDB");
     const myColl = myDB.collection("Spots");
+    const CountryColl = myDB.collection("Countries");
+    const deshColl = myDB.collection("Country");
+    const Country_Coll = myDB.collection("Country_Name");
 
     app.get('/spots', async (req, res) => {
       const cursor = await myColl.find().toArray();
@@ -68,6 +71,14 @@ async function run() {
       res.send(cursor);
     });
 
+    app.get('/Country_name', async (req, res) => {
+      const cursor = await Country_Coll.find().toArray();
+      res.send(cursor);
+      console.log(cursor);
+    })
+
+
+
     app.delete('/spots/id/:id', async (req, res) => {
       const id = req.params.id;
       const query = { _id: new ObjectId(id) };
@@ -93,6 +104,46 @@ async function run() {
       const result = await myColl.insertOne(spot);
       res.send(result);
     })
+
+    app.post('/Country_name', async (req, res) => {
+      const {countries} = req.body;
+
+
+      const result = await Country_Coll.insertMany([
+        countries
+
+      ]);
+      res.send(result);
+      console.log(result);
+
+
+    });
+
+    app.put('/spots/id/:id', async (req, res) => {
+      const id = req.params.id;
+      const updatedSpot = req.body;
+      const query = { _id: new ObjectId(id) };
+      const updateDoc = {
+        $set: {
+          Image: updatedSpot.Image,
+          spotName: updatedSpot.spotName,
+          countryName: updatedSpot.countryName,
+          location: updatedSpot.location,
+          description: updatedSpot.description,
+          averageCost: updatedSpot.averageCost,
+          season: updatedSpot.season,
+          time: updatedSpot.time,
+          visitors: updatedSpot.visitors,
+          Name: updatedSpot.Name,
+          email: updatedSpot.email,
+        },
+      };
+      const result = await myColl.updateOne(query, updateDoc);
+      res.send(result);
+    });
+
+
+
 
 
     await client.db("admin").command({ ping: 1 });
