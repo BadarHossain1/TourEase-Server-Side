@@ -9,9 +9,12 @@ const port = process.env.PORT || 5000;
 app.use(cors());
 app.use(express.json());
 
+
+ app.use (cors({origin:["http://localhost:5173/","https://tourease-b114f.web.app/"]}))
+
 console.log(process.env.DB_USER);
 console.log(process.env.DB_PASSWORD);
-console.log("Hello");
+
 
 
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@cluster0.lblkdq0.mongodb.net/your_database_name?retryWrites=true&w=majority&appName=Cluster0`;
@@ -28,12 +31,13 @@ async function run() {
   try {
 
 
-    await client.connect();
+    
     const myDB = client.db("TourEaseDB");
     const myColl = myDB.collection("Spots");
-    const CountryColl = myDB.collection("Countries");
-    const deshColl = myDB.collection("Country");
-    const Country_Coll = myDB.collection("Country_Name");
+    // const CountryColl = myDB.collection("Countries");
+    // const deshColl = myDB.collection("Country");
+    // const Country_Coll = myDB.collection("Country_Name");
+     const Country_Coll = myDB.collection("country_name");
 
     app.get('/spots', async (req, res) => {
       const cursor = await myColl.find().toArray();
@@ -106,13 +110,10 @@ async function run() {
     })
 
     app.post('/Country_name', async (req, res) => {
-      const {countries} = req.body;
+      const country = req.body;
+      console.log('New country added here', country);
+      const result = await Country_Coll.insertMany(country);
 
-
-      const result = await Country_Coll.insertMany([
-        countries
-
-      ]);
       res.send(result);
       console.log(result);
 
